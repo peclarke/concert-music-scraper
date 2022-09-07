@@ -3,6 +3,7 @@ import requests
 import pandas
 import os
 import json
+import sys
 
 from bs4 import BeautifulSoup
 
@@ -11,17 +12,19 @@ MAX_PER_PAGE = 100
 ROOT = "https://www.jwpepper.com"
 
 # Changeable Values
-NUMBER = 400 # Number of Scores to Generate
+NUMBER = 50 # Number of Scores to Generate
 
-def generate_urls():
-    factor = math.ceil(NUMBER / MAX_PER_PAGE)
+def generate_urls(number):
+    factor = math.ceil(number / MAX_PER_PAGE)
     # print(factor)
     urls = []
     for i in range(factor):
         start = MAX_PER_PAGE * i
 
-        if NUMBER - MAX_PER_PAGE * i < 100:
-            pageNum = NUMBER - MAX_PER_PAGE
+        if number <= 100:
+            pageNum = number
+        elif number - MAX_PER_PAGE * i < 100:
+            pageNum = number - MAX_PER_PAGE
         else:
             pageNum = MAX_PER_PAGE
 
@@ -72,8 +75,8 @@ def query_website(soup):
 
     return sources
 
-def query_all():
-    urls = generate_urls()
+def query_all(number):
+    urls = generate_urls(number)
     print("Starting website scraping...")
     all_scores = []
     for url in urls:
@@ -96,10 +99,22 @@ def json_to_spreadsheet(res):
     pandas.read_json("./outputs/results.json").to_excel("./outputs/output.xlsx")
 
 
-def main():
-    res = query_all()
+def main(arglist):
+    if len(arglist) != 1:
+        print("Running this file scrapes JWPepper for scores.")
+        print("Usage: app.py [number of scores]")
+        return
+
+    try:
+        number = int(arglist[0])
+    except Exception as e:
+        print("You must specify a number")
+        return
+
+    res = query_all(number)
     print("Finished scraping website and formatting results")
     json_to_spreadsheet(res)
     print("Finished generating spreadsheet")
 
-main()
+if __name__ == '__main__':
+    main(sys.argv[1:])
