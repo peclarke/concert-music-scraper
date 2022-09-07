@@ -1,9 +1,12 @@
 # JW Pepper Concert Music Score Scraper
 
-## Requirements
+## Setup & Requirements
 - Start by cloning the repository (downloading it to your computer)
 - Enter your repository folder
+- Create a virtual environment, `python3 -m venv .venv`
+- Access that environment, `source .venv/bin/activate` (mac)
 - Download the requirements: `pip3 install -r requirements.txt`
+- Run the application
 
 ## Usage
 To use the application, call `app.py` from your command line interface. Specifically:
