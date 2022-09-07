@@ -1,4 +1,8 @@
 import requests
+import pandas
+import os
+import json
+
 from bs4 import BeautifulSoup
 
 NUM_PER_PAGE = 64
@@ -37,23 +41,32 @@ def query_website():
                 'composer': composer_element,
                 'publisher': publisher_element,
                 'level': level,
-                'link': link_text
+                'audio-link': link_text
             }
 
             if video_link:
-                # sometimes does audio too
-                info['video'] = video_link["onclick"][25:110].replace("',", "").replace("'", "")
+                link = video_link["onclick"][25:110].replace("',", "").replace("'", "")
+                if "audio" not in link:
+                    info['video-link'] = link
 
             sources.append(info)
 
     return sources
 
-def json_to_spreadsheet():
-    pass
+def json_to_spreadsheet(res):
+    # delete previous
+    if os.path.exists("./outputs/results.json"):       
+        os.remove('./outputs/results.json')
+    # make the json file
+    f = open("./outputs/results.json", "a")
+    json_obj = json.dumps(res)
+    f.write(json_obj)
+    f.close()
 
+    pandas.read_json("./outputs/results.json").to_excel("./outputs/output.xlsx")
 
 
 res = query_website()
-print(res)
-
-# print(len('http://www.jwpepper.com/sheet-music/media-player.jsp?&type=audio&productID=10520991E'))
+print("Finished querying website")
+json_to_spreadsheet(res)
+print("Finished writing to spreadsheet")
