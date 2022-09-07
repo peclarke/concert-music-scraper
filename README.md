@@ -1,7 +1,7 @@
 # JW Pepper Concert Music Score Scraper
 
 ## Requirements
-- Start by cloning the repository
+- Start by cloning the repository (downloading it to your computer)
 - Enter your repository folder
 - Download the requirements: `pip3 install -r requirements.txt`
 
